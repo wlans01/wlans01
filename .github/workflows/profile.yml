@@ -39,9 +39,9 @@ jobs:
             dist/snake.svg?palette=github-light&color_snake=#216e39
 
       # 회사(private) 레포 커밋은 API 가 레포별로 내주지 않아 언어 원그래프가
-      # 공개 레포 몇 개만 반영한다 → 원그래프를 잘라낸다.
-      - name: Strip language pie
-        run: node scripts/strip-pie.mjs profile-3d-contrib/profile-night-green.svg profile-3d-contrib/profile-green-animate.svg
+      # 공개 레포 몇 개만 반영한다 → 언어 원그래프·레이더 차트를 잘라낸다.
+      - name: Strip language pie and radar
+        run: node scripts/strip-charts.mjs profile-3d-contrib/profile-night-green.svg profile-3d-contrib/profile-green-animate.svg
 
       - name: Collect outputs
         run: |
