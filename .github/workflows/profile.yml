@@ -25,9 +25,11 @@ jobs:
       - uses: actions/checkout@v6
 
       # 3D 잔디 빌딩 (profile-3d-contrib/*.svg)
+      # PROFILE_PAT(classic, repo + read:user)가 있으면 회사(private) 레포 언어까지 집계,
+      # 없으면 기본 GITHUB_TOKEN 으로 공개 레포만 집계한다.
       - uses: yoshi389111/github-profile-3d-contrib@v0.9.3
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PROFILE_PAT || secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
 
       # 잔디 먹는 snake (다크/라이트)
