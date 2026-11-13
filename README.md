@@ -39,7 +39,7 @@ background:
 ## Tech Stack
 
 <p align="center">
-  <img width="100%" src="./assets/claude-eats-stack.svg" alt="Claude eats my tech stack — 실제로 쓸 줄 아는 건 Python, Flutter. 나머지는 Claude Code." />
+  <img width="100%" src="./assets/claude-eats-stack.svg" alt="나의 기술 스택은 … Claude" />
 </p>
 
 ## Contributions
