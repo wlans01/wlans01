@@ -12,7 +12,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/GSI-지에스아이㈜-26a641?style=flat-square&labelColor=0d1117" alt="GSI" />
   <img src="https://img.shields.io/badge/since-2025.12-39d353?style=flat-square&labelColor=0d1117" alt="since 2025.12" />
-  <img src="https://img.shields.io/badge/domain-Port%20Crane%20Automation-0e4429?style=flat-square&labelColor=0d1117" alt="focus" />
+  <img src="https://img.shields.io/badge/domain-Port%20Crane%20Automation-0e4429?style=flat-square&labelColor=0d1117" alt="domain" />
+  <img src="https://img.shields.io/badge/built%20with-Claude%20Code-D97757?style=flat-square&labelColor=0d1117&logo=claude&logoColor=D97757" alt="built with Claude Code" />
 </p>
 
 <br />
@@ -38,14 +39,7 @@ background:
 ## Tech Stack
 
 <p align="center">
-  <img src="https://skillicons.dev/icons?i=py,cpp,cs,rust,ts,react,vite,fastapi&theme=dark" alt="languages" /><br />
-  <img src="https://skillicons.dev/icons?i=flutter,dart,linux,bash,git,githubactions&theme=dark" alt="tools" />
-</p>
-<p align="center">
-  <img src="https://img.shields.io/badge/Open3D-161b22?style=for-the-badge" alt="Open3D" />
-  <img src="https://img.shields.io/badge/NumPy-161b22?style=for-the-badge&logo=numpy&logoColor=39d353" alt="NumPy" />
-  <img src="https://img.shields.io/badge/LiDAR-161b22?style=for-the-badge" alt="LiDAR" />
-  <img src="https://img.shields.io/badge/Siemens%20PLC-161b22?style=for-the-badge" alt="Siemens PLC" />
+  <img width="100%" src="./assets/claude-eats-stack.svg" alt="Claude eats my tech stack — 실제로 쓸 줄 아는 건 Python, Flutter. 나머지는 Claude Code." />
 </p>
 
 ## Contributions
