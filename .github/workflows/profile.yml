@@ -1,6 +1,7 @@
 name: Profile widgets
 
-# 3D 잔디 + snake 를 매일 다시 그려서 `output` 브랜치에 올린다.
+# 프로필 위젯 3종(터미널 카드 · 기술 스택 · 3D 잔디)을 같은 터미널 창 테마
+# (scripts/theme.mjs)로 매일 다시 그려 `output` 브랜치에 올린다.
 # README 는 raw.githubusercontent.com/wlans01/wlans01/output/... 을 참조한다.
 on:
   schedule:
@@ -8,7 +9,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: [".github/workflows/profile.yml"]
+    paths: [".github/workflows/profile.yml", "scripts/**", "assets/**"]
 
 permissions:
   contents: write
@@ -24,31 +25,30 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      # 3D 잔디 빌딩 (profile-3d-contrib/*.svg)
+      # 3D 잔디 원본 (profile-3d-contrib/*.svg) — 아래 build-3d 가 재스타일링
       - uses: yoshi389111/github-profile-3d-contrib@v0.9.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
 
-      # 잔디 먹는 snake (다크/라이트)
-      - uses: Platane/snk/svg-only@v3
+      - uses: actions/setup-node@v4
         with:
-          github_user_name: ${{ github.repository_owner }}
-          outputs: |
-            dist/snake-dark.svg?palette=github-dark&color_snake=#39d353
-            dist/snake.svg?palette=github-light&color_snake=#216e39
+          node-version: 22
 
-      # 회사(private) 레포 커밋은 API 가 레포별로 내주지 않아 언어 원그래프가
-      # 공개 레포 몇 개만 반영한다 → 언어 원그래프·레이더 차트를 잘라낸다.
-      - name: Strip language pie and radar
-        run: node scripts/strip-charts.mjs profile-3d-contrib/profile-night-green.svg profile-3d-contrib/profile-green-animate.svg
+      # 터미널 카드: 프로필 + 기여 통계(GraphQL 기여 캘린더, 비공개 기여 포함)
+      - name: Build profile card
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/build-card.mjs dist ${{ github.repository_owner }}
 
-      - name: Collect outputs
-        run: |
-          mkdir -p dist/3d
-          cp profile-3d-contrib/profile-night-green.svg dist/3d/
-          cp profile-3d-contrib/profile-green-animate.svg dist/3d/
-          ls -la dist dist/3d
+      - name: Build stack window
+        run: node scripts/build-stack.mjs dist assets/claude-eats-stack.svg
+
+      # 언어 원그래프·레이더 제거(비공개 레포 미반영) + 푸터 제거 + 테마 색
+      - name: Build 3D contribution window
+        run: node scripts/build-3d.mjs dist profile-3d-contrib/profile-night-green.svg
+
+      - run: ls -la dist
 
       - uses: crazy-max/ghaction-github-pages@v5
         with:
