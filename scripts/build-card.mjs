@@ -5,13 +5,18 @@
 // contributions when they are enabled on the profile). Without a token the
 // stats lines are left out instead of showing fake numbers.
 //
-// usage: GITHUB_TOKEN=... node scripts/build-card.mjs <outDir> [login]
+// The 3D contribution calendar (github-profile-3d-contrib output) is embedded
+// as a small inset next to the stats.
+//
+// usage: GITHUB_TOKEN=... node scripts/build-card.mjs <outDir> [login] [3d.svg]
 import fs from "node:fs";
 import path from "node:path";
 import { THEMES, windowSvg, esc } from "./theme.mjs";
+import { contrib3d, contrib3dCss } from "./contrib3d.mjs";
 
 const outDir = process.argv[2] ?? "dist";
 const LOGIN = process.argv[3] ?? process.env.GITHUB_REPOSITORY_OWNER ?? "wlans01";
+const GRID_SVG = process.argv[4] ?? "profile-3d-contrib/profile-night-green.svg";
 const SINCE = { y: 2025, m: 12 }; // GSI 입사
 
 // ---------- data ----------
@@ -145,7 +150,8 @@ function crane(t, W, H) {
 }
 
 // ---------- layout ----------
-function render(t, stats, today) {
+function render(name, stats, today, grid) {
+  const t = THEMES[name];
   const LH = 22, KX = 330, VX = 422, top = 74;
   const out = [];
   let y = top;
@@ -167,10 +173,11 @@ function render(t, stats, today) {
     vals.forEach((v, i) => line(i ? "" : k, fmt(v)));
   }
 
+  y += 12;
+  const statsTop = y;
   if (stats) {
-    y += 8;
-    line("GitHub", `${stats.total.toLocaleString("en-US")} ${sep("contributions · past year")}`);
-    line("Streak", `${stats.current} days ${sep("current ·")} ${stats.best} days ${sep("best")}`);
+    line("GitHub", `${stats.total.toLocaleString("en-US")} ${sep("contributions")}`);
+    line("Streak", `${stats.current} days ${sep("· best")} ${stats.best}`);
   }
 
   // contribution-scale color blocks (neofetch palette row)
@@ -178,6 +185,15 @@ function render(t, stats, today) {
   t.green.forEach((c, i) => out.push(`<rect x="${KX + i * 30}" y="${y - 12}" width="26" height="14" rx="2" fill="${c}" stroke="${t.border}" stroke-width="${i ? 0 : 1}"/>`));
   out.push(`<rect x="${KX + 5 * 30}" y="${y - 12}" width="26" height="14" rx="2" fill="${t.claude}"/>`);
   y += LH;
+
+  // small 3D contribution calendar beside the stats
+  if (grid) {
+    const IX = 628, IW = 252, IH = Math.round((IW * grid.viewBox[3]) / grid.viewBox[2]);
+    const label = grid.period ? `${grid.period[0]} → ${grid.period[1]}` : "past year";
+    out.push(`<text class="w-mono w-small" x="${IX + IW}" y="${statsTop - 4}" text-anchor="end" fill="${t.muted}">${esc(label)}</text>`);
+    out.push(`<svg x="${IX}" y="${statsTop + 4}" width="${IW}" height="${IH}" viewBox="${grid.viewBox.join(" ")}">${grid.inner}</svg>`);
+    y = Math.max(y, statsTop + 4 + IH + 6);
+  }
 
   // prompt lines
   const prompt = (yy, cmd) => `<text class="w-mono" x="28" y="${yy}"><tspan fill="${t.accent}" font-weight="700">wlans01@gsi</tspan><tspan fill="${t.muted}">:</tspan><tspan fill="${t.fg}">~</tspan><tspan fill="${t.muted}">$ </tspan><tspan fill="${t.fg}">${cmd}</tspan></text>`;
@@ -195,15 +211,26 @@ function render(t, stats, today) {
     label: "Choi Ji-moon — LiDAR 3D Perception Engineer @ GSI",
     bodyH: endY + 20,
     body,
-    style: "@keyframes blink{0%,49%{fill-opacity:1}50%,100%{fill-opacity:0}}.cursor{animation:blink 1.1s steps(1) infinite}",
+    style: [
+      "@keyframes blink{0%,49%{fill-opacity:1}50%,100%{fill-opacity:0}}.cursor{animation:blink 1.1s steps(1) infinite}",
+      ".w-small{font-size:11px}",
+      grid ? contrib3dCss(name) : "",
+    ].join("\n"),
   });
 }
 
 const today = kstToday();
 const stats = await fetchStats();
+let grid = null;
+if (GRID_SVG && fs.existsSync(GRID_SVG)) {
+  grid = contrib3d(fs.readFileSync(GRID_SVG, "utf8"));
+  if (grid.removed !== 2) console.warn(`::warning::3D: removed ${grid.removed} chart group(s), expected 2 (generator output changed?)`);
+} else {
+  console.warn(`::warning::3D source not found (${GRID_SVG}), card built without the calendar inset`);
+}
 fs.mkdirSync(outDir, { recursive: true });
-for (const [name, t] of Object.entries(THEMES)) {
+for (const name of Object.keys(THEMES)) {
   const file = path.join(outDir, `card-${name}.svg`);
-  fs.writeFileSync(file, render(t, stats, today));
-  console.log(`${file}${stats ? ` (total ${stats.total}, streak ${stats.current}/${stats.best})` : " (no stats)"}`);
+  fs.writeFileSync(file, render(name, stats, today, grid));
+  console.log(`${file}${stats ? ` (total ${stats.total}, streak ${stats.current}/${stats.best})` : " (no stats)"}${grid ? " + 3D inset" : ""}`);
 }

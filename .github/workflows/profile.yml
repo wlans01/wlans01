@@ -1,6 +1,6 @@
 name: Profile widgets
 
-# 프로필 위젯 3종(터미널 카드 · 기술 스택 · 3D 잔디)을 같은 터미널 창 테마
+# 프로필 위젯 2종(터미널 카드 + 3D 잔디 인셋 · 기술 스택)을 같은 터미널 창 테마
 # (scripts/theme.mjs)로 매일 다시 그려 `output` 브랜치에 올린다.
 # README 는 raw.githubusercontent.com/wlans01/wlans01/output/... 을 참조한다.
 on:
@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      # 3D 잔디 원본 (profile-3d-contrib/*.svg) — 아래 build-3d 가 재스타일링
+      # 3D 잔디 원본 (profile-3d-contrib/*.svg) — build-card 가 카드 인셋으로 재스타일링
       - uses: yoshi389111/github-profile-3d-contrib@v0.9.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -36,17 +36,14 @@ jobs:
           node-version: 22
 
       # 터미널 카드: 프로필 + 기여 통계(GraphQL 기여 캘린더, 비공개 기여 포함)
+      # + 3D 잔디 인셋(언어 원그래프·레이더·푸터 제거, 테마 색)
       - name: Build profile card
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/build-card.mjs dist ${{ github.repository_owner }}
+        run: node scripts/build-card.mjs dist ${{ github.repository_owner }} profile-3d-contrib/profile-night-green.svg
 
       - name: Build stack window
         run: node scripts/build-stack.mjs dist assets/claude-eats-stack.svg
-
-      # 언어 원그래프·레이더 제거(비공개 레포 미반영) + 푸터 제거 + 테마 색
-      - name: Build 3D contribution window
-        run: node scripts/build-3d.mjs dist profile-3d-contrib/profile-night-green.svg
 
       - run: ls -la dist
 

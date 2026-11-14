@@ -1,4 +1,4 @@
-<!-- 위젯 3종은 .github/workflows/profile.yml 이 scripts/build-*.mjs 로 매일 다시 그려 output 브랜치에 올린다 (테마: scripts/theme.mjs) -->
+<!-- 위젯 2종(카드·스택)은 .github/workflows/profile.yml 이 scripts/build-*.mjs 로 매일 다시 그려 output 브랜치에 올린다 (테마: scripts/theme.mjs) -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/wlans01/wlans01/output/card-dark.svg" />
@@ -12,14 +12,6 @@
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/wlans01/wlans01/output/stack-dark.svg" />
     <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/wlans01/wlans01/output/stack-light.svg" />
     <img width="100%" src="https://raw.githubusercontent.com/wlans01/wlans01/output/stack-dark.svg" alt="나의 기술 스택은 … Claude" />
-  </picture>
-</p>
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/wlans01/wlans01/output/3d-dark.svg" />
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/wlans01/wlans01/output/3d-light.svg" />
-    <img width="100%" src="https://raw.githubusercontent.com/wlans01/wlans01/output/3d-dark.svg" alt="3D contribution calendar" />
   </picture>
 </p>
 

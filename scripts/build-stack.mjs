@@ -19,8 +19,14 @@ const frame = /<rect x="0\.5" y="0\.5" width="899" height="229" rx="12"[^>]*\/>/
 if (!frame.test(inner)) throw new Error("source frame rect not found (asset changed?)");
 inner = inner.replace(frame, "");
 
+// The source ends with a `git log … | wc -l → N` line whose N was hard-coded and
+// can't be verified or refreshed from Actions (private org repos) — drop it.
+const log = /<text class="mono" x="450" y="204"[^>]*animation:log[^>]*>[\s\S]*?<\/text>/;
+if (!log.test(inner)) console.warn("::warning::stack: log line not found (asset changed?)");
+inner = inner.replace(log, "");
+
 const BODY_Y = 14; // trim the top padding the status line used to occupy
-const BODY_H = 230 - BODY_Y;
+const BODY_H = 182 - BODY_Y; // and the bottom space the log line used
 
 // "✻ Clauding… n/14" status moves from the body corner into the title bar
 // (body y = BODY_Y maps to window y = TITLE_H)
